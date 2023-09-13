@@ -1,1 +1,5 @@
 GET http://localhost:3030/hello
+###
+GET http://localhost:3030/add/recettenom/lienImage/50/12
+###
+GET http://localhost:3030/findAll
