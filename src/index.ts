@@ -1,9 +1,10 @@
 import express from "express";
 import dotenv from "dotenv/config";
 import sequelize, { DataTypes , Sequelize} from "sequelize";
+import cors from 'cors';
 
 const app = express();
-//dotenv.config();
+app.use(cors());
 
 const myport = process.env.PORT ? parseInt(process.env.PORT as string) : 3030;
 
@@ -39,12 +40,12 @@ const maRecette = mySequelize.define('Recette', {
     }
     ,
     dureeRecette:{
-        type : DataTypes.STRING,
+        type : DataTypes.INTEGER,
         allowNull : false
     }
     ,
     noteRecette:{
-        type : DataTypes.STRING,
+        type : DataTypes.NUMBER,
         allowNull : false
     }
 });
@@ -52,7 +53,7 @@ const maRecette = mySequelize.define('Recette', {
 console.log(maRecette  === mySequelize.models.Recette);
 
 //This creates the table
-// maRecette.sync({ force: true});
+//maRecette.sync({ force: true});
 maRecette.sync();
 
 
@@ -62,11 +63,11 @@ app.get("/hello", async (_, res) => {
 });
 
 app.get("/add/:name/:lienImage/:duree/:note", async (req, res) => {  
-    console.log('tptp')
+    //console.log('tptp')
     const nameRecette = req.params.name;
-    const lienImageRecette = req.params.lienImage;
-    const dureeRecette = req.params.duree;
-    const noteRecette = req.params.note;
+    const lienImageRecette = req.params.lienImage.replaceAll('%2F', "/");
+    const dureeRecette = parseInt(req.params.duree);
+    const noteRecette = parseInt(req.params.note);
     const creerMaRecette = await maRecette.create({nameRecette, lienImageRecette, dureeRecette , noteRecette })     
     res.send(creerMaRecette);   
 });
