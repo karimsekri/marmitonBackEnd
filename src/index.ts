@@ -2,9 +2,11 @@ import express from "express";
 import dotenv from "dotenv/config";
 import sequelize, { DataTypes , Sequelize} from "sequelize";
 import cors from 'cors';
+import bodyParser from "body-parser"
 
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
 
 const myport = process.env.PORT ? parseInt(process.env.PORT as string) : 3030;
 
@@ -58,12 +60,13 @@ maRecette.sync();
 
 
 
-app.get("/hello", async (_, res) => {        
+app.get("/hello", async (_, res) => {    
+    
+    //res.send renvoi du text    
     res.send("Hello");   
 });
 
 app.get("/add/:name/:lienImage/:duree/:note", async (req, res) => {  
-    //console.log('tptp')
     const nameRecette = req.params.name;
     const lienImageRecette = req.params.lienImage.replaceAll('%2F', "/");
     const dureeRecette = parseInt(req.params.duree);
@@ -72,9 +75,9 @@ app.get("/add/:name/:lienImage/:duree/:note", async (req, res) => {
     res.send(creerMaRecette);   
 });
 
-app.get("/findAll", async (_, res) => {   
+app.get("/recettes", async (_, res) => {   
     const mesRecettes =  await maRecette.findAll();     
-    res.send(mesRecettes);   
+    await res.send(mesRecettes);   
 });
 
 app.listen( myport, () =>
