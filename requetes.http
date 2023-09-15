@@ -1,9 +1,25 @@
 GET http://localhost:3030/hello
 ###
-GET http://localhost:3030/add/recettenom/lienImage/50/12
+POST  http://localhost:3030/recettes
 ###
 GET http://localhost:3030/recettes
+###
+GET http://localhost:3030/recettes/1
+###
+DELETE http://localhost:3030/recettes/1
+###
+PUT http://localhost:3030/recettes/1
 
 ###
-GET 
-http://localhost:3030/add/oups/https://cdn.pixabay.com/photo/2018/07/21/03/55/woman-3551832_1280.jpg/155/7
+
+POST http://localhost:3030/recettes
+Content-Type: application/json
+
+{
+    "nameRecette": "nomfds",
+    "lienImageRecette": "lienfdsf",
+    "dureeRecette": 1255,
+    "noteRecette": 13
+}
+
+

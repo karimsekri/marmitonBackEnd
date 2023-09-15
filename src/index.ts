@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request } from "express";
 import dotenv from "dotenv/config";
 import sequelize, { DataTypes , Sequelize} from "sequelize";
 import cors from 'cors';
@@ -58,7 +58,14 @@ console.log(maRecette  === mySequelize.models.Recette);
 //maRecette.sync({ force: true});
 maRecette.sync();
 
+interface IMaRequetBody {
+    id:number,
+    name: string,
+    lienImage : string,
+    duree : number,
+    note : number,
 
+  }
 
 app.get("/hello", async (_, res) => {    
     
@@ -66,18 +73,58 @@ app.get("/hello", async (_, res) => {
     res.send("Hello");   
 });
 
-app.get("/add/:name/:lienImage/:duree/:note", async (req, res) => {  
-    const nameRecette = req.params.name;
-    const lienImageRecette = req.params.lienImage.replaceAll('%2F', "/");
-    const dureeRecette = parseInt(req.params.duree);
-    const noteRecette = parseInt(req.params.note);
+//create a recette
+app.post("/recettes", async (req, res) => {  
+    const nameRecette = req.body.name;
+    const lienImageRecette = req.body.lienImage;
+    const dureeRecette = req.body.duree;
+    const noteRecette = req.body.note;
+
     const creerMaRecette = await maRecette.create({nameRecette, lienImageRecette, dureeRecette , noteRecette })     
-    res.send(creerMaRecette);   
+    res.json(creerMaRecette);   
 });
 
+//Get a list of recettes
 app.get("/recettes", async (_, res) => {   
     const mesRecettes =  await maRecette.findAll();     
-    await res.send(mesRecettes);   
+    res.json(mesRecettes);   
+});
+
+//Get a specific recette
+app.get("/recettes/:id", async (req, res) => {   
+    const idRecette = req.params.id;
+    const mesRecettes =  await maRecette.findAll({
+        where: {
+          id: idRecette
+        }
+      });     
+    res.json(mesRecettes);   
+});
+
+//Delete a recette
+app.delete("/recettes/:id", async (req, res) => {   
+    const idRecette = req.params.id;
+    const mesRecettes =  await maRecette.destroy({
+        where: {
+          id: idRecette
+        }
+      });     
+    res.json(mesRecettes);   
+});
+
+//Update a recette
+app.put("/recettes/:id", async (req : Request<IMaRequetBody>, res) => {   
+    const idRecette = req.params.id;
+    const nameRecette = req.body.name;
+    const lienImageRecette = req.body.lienImage;
+    const dureeRecette = req.body.duree;
+    const noteRecette = req.body.note;
+    const mesRecettes =  await maRecette.update({ nameRecette: nameRecette, lienImageRecette : lienImageRecette, dureeRecette : dureeRecette, noteRecette : noteRecette }, {
+        where: {
+          id: idRecette,
+        },
+      });     
+    res.json(mesRecettes);   
 });
 
 app.listen( myport, () =>
